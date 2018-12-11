@@ -44,3 +44,25 @@ class Wiener_block(nn.Module):
             return self.wiener(input, self.psf).clamp(-1,1)
         
         return self.wiener(input, self.psf)
+    
+    
+class Wiener_dec(nn.Module):
+    def __init__(self, filter_dim=(5,5), num_filters=24, init_alpha=-2, normalize_filters=True, 
+                 clamp=True):
+        super(Wiener_dec, self).__init__()
+        
+        self.normalize_filters = normalize_filters
+        self.clamp = clamp
+        self.num_filters = num_filters
+        self.filter_dim = filter_dim
+        
+        if self.normalize_filters:
+            self.wiener = nn.utils.weight_norm(pure_wiener(filter_dim, num_filters, init_alpha), dim=0)
+        else:
+            self.wiener = pure_wiener(filter_dim, num_filters, init_alpha)
+        
+    def forward(self, input, psf):
+        if self.clamp:
+            return self.wiener(input, psf).clamp(-1,1)
+        
+        return self.wiener(input, psf)
