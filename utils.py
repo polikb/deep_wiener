@@ -5,7 +5,7 @@ from skimage import img_as_float
 from skimage.transform import resize
 from skimage.measure import compare_psnr
 from skimage.color import rgb2gray, rgb2ycbcr, ycbcr2rgb
-
+import os
 
 def normalize_img(x):
     x /= 255
