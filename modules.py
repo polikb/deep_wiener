@@ -3,9 +3,9 @@ import torch
 from torch import nn as nn
 from torch.nn.parameter import Parameter
 
-from complex_utils import *
-from func_utils import *
-from functions import *
+from deep_wiener.complex_utils import *
+from deep_wiener.func_utils import *
+from deep_wiener.functions import *
 
 class pure_wiener(nn.Module):
     def __init__(self, filter_dim=(5,5), num_filters=24, init_alpha=-2):

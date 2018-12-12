@@ -1,3 +1,6 @@
+import numpy as np
+import torch
+
 from torch import nn as nn
 from torch.nn import functional as F
 from skimage.io import imread
@@ -6,6 +9,8 @@ from skimage.transform import resize
 from skimage.measure import compare_psnr
 from skimage.color import rgb2gray, rgb2ycbcr, ycbcr2rgb
 from torch.utils.data import Dataset
+from scipy.signal import convolve2d, fftconvolve
+
 import os
 
 def normalize_img(x):
@@ -61,11 +66,12 @@ def reassemble_rgb(recovered_luminance, ycbcr):
     return img_as_float(recovered_rgb)
 
 class microcells(Dataset):
-    def __init__(self, folder='../dsbowl/train/', crop=True):
+    def __init__(self, folder='../dsbowl/train/', kernels='kernels/1d/', noise=True, crop=True):
         
         self.folder = folder
         self.pathes = os.listdir(self.folder)
-        
+        self.kernels = kernels
+        self.noise = noise
         self.crop = crop
         
     def get_crop_indexes(self, x):
@@ -84,8 +90,12 @@ class microcells(Dataset):
         
         ground_truth = img_as_float(imread(image_path)[...,:3])
         
-        psf = make_kernel()
+        psf = make_kernel(kernels=self.kernels)
         blurred = blur(ground_truth.copy(), psf=psf)
+
+        if self.noise:
+            blurred = blurred + np.random.normal(scale=0.005,size=blurred.shape)
+            blurred = blurred.clip(0,1)
         
         psf = torch.FloatTensor(psf)[None,...]
         

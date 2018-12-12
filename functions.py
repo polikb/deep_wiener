@@ -2,8 +2,8 @@ from torch import nn as nn
 from torch.autograd import Variable, Function
 import torch.nn.functional as F
 
-from complex_utils import *
-from func_utils import *
+from deep_wiener.complex_utils import *
+from deep_wiener.func_utils import *
 
 class Wiener2d_func(Function):
     
