@@ -94,7 +94,7 @@ class microcells(Dataset):
         blurred = blur(ground_truth.copy(), psf=psf)
 
         if self.noise:
-            blurred = blurred + np.random.normal(scale=0.005,size=blurred.shape)
+            blurred = blurred + np.random.normal(scale=0.008,size=blurred.shape)
             blurred = blurred.clip(0,1)
         
         psf = torch.FloatTensor(psf)[None,...]
